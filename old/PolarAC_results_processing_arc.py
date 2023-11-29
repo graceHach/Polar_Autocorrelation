@@ -33,10 +33,10 @@ for i,j in enumerate(csv_filepaths):
     feature_numbers2.append(points[filenames[i]+' number of features 2'][0])
     result = pd.concat([result,points[[filenames[i]+' theta',filenames[i]+' r autocorrelation']]], axis=1)
 
-# Add two new colums for filename / feature number
+# Add two new columns for filename / feature number
 filenames_df = pd.DataFrame(filenames)
 filenames_df2 = pd.DataFrame(filenames)
-feature_num_df =  pd.DataFrame(feature_numbers)
+feature_num_df = pd.DataFrame(feature_numbers)
 feature_num2_df = pd.DataFrame(feature_numbers2)
 filenames_df.columns = ["sign change"] 
 filenames_df2.columns = ["2nd deriv"] 
