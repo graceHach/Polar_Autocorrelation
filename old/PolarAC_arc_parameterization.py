@@ -15,6 +15,9 @@ startTime = time.time()
 
 # updated and corrected
 def arc_length(out_pd1):
+    """
+    Modifies arc length dataframe in place to
+    """
     distance = 0
     for i in range(len(out_pd1)-1):
         distance += ((out_pd1['x'][i]-out_pd1['x'][i+1])**2+(out_pd1['y'][i]-out_pd1['y'][i+1])**2)**0.5
@@ -22,7 +25,7 @@ def arc_length(out_pd1):
     for i in range(len(out_pd1)-1):
         distance_progress += ((out_pd1['x'][i]-out_pd1['x'][i+1])**2+(out_pd1['y'][i]-out_pd1['y'][i+1])**2)**0.5
         #out_pd1['arc_length'][i+1] = distance_progress/distance*360
-        out_pd1.iloc[i,3] = distance_progress/distance*360
+        out_pd1.iloc[i, 3] = distance_progress/distance*360
         #print(distance_progress/distance*360)
     #out_pd1['arc_length'][len(out_pd1)-1] = 360
     #print(distance,distance_progress)
@@ -46,7 +49,7 @@ def sign_change(list_):
     for i in range(len(list_)-1):
         if list_[i]*list_[i+1]<=0:
             sign_changes=sign_changes+1
-    return sign_changes
+    return sign_changes//2
 
 def tiebreaker(dataset):
     derivative = []
@@ -57,7 +60,7 @@ def tiebreaker(dataset):
     for i in range(len(derivative)-1):
         d2x = derivative[i+1]-derivative[i]
         second_derivative.append(d2x)
-    return sign_change(second_derivative)
+    return sign_change(second_derivative)//2
 
 def return_two_closest(point_,points_list):
     x, y = point_[0], point_[1]
@@ -107,25 +110,26 @@ def sort_CCW(points_pd):
         sorta.append(p1)
     return sorta
 
+
 # Does this make the result folder if not present? (no)
-bit = "organoid_point_clouds"
+bit = "beans"
 data_directory = "C:\\Users\\graci\\OneDrive\\Documents\\Lab\\Polar AC\\"+bit
 result_directory = "C:\\Users\\graci\\OneDrive\\Documents\\Lab\\Polar AC\\"+bit+"\\results_arc"
 csv_files = glob.glob(os.path.join(data_directory, "*.csv"))
 
 
-#Iterative processing of numbered images, starting with 1.csv
+# Iterative processing of numbered images, starting with 1.csv
 for j in csv_files:
     os.chdir(data_directory)
     fileName = j.split("\\")[-1]
     points_pd = pd.read_csv(j)
-    points_pd.columns=['x','y']
+    points_pd.columns = ['x', 'y']
     points_pd = pd.DataFrame(sort_CCW(points_pd))
-    points_pd.columns=['x','y']
-    points_pd['r']=0
-    points_pd['arc_length']=0
+    points_pd.columns = ['x', 'y']
+    points_pd['r'] = 0
+    points_pd['arc_length'] = 0
 
-    #adding points converted to polar
+    # adding points converted to polar
 
     x_bar=np.mean(points_pd['x'])
     y_bar=np.mean(points_pd['y'])
@@ -173,8 +177,8 @@ for j in csv_files:
     result_vector = list(result['r_cor']) # Sack up and use Pandas for the whole thing 
     
     # Dimensional Reduction
-    result.iloc[0,2] = int(sign_change(result_vector)/2)
-    result.iloc[0,3] = tiebreaker(result_vector)/2
+    result.iloc[0,2] = sign_change(result_vector)
+    result.iloc[0,3] = tiebreaker(result_vector)
     # Dimensional Reduction by way of scipy maxima detection
     '''
     numpy_result = result['r_cor'].to_numpy()
@@ -194,10 +198,10 @@ for j in csv_files:
     '''
     # Change current directory
     os.chdir(result_directory)
-    result.to_csv("!"+fileName[0:-4]+"_PolarAC.csv",index=False)
+    result.to_csv("!"+fileName[0:-4]+"_PolarAC.csv", index=False)
     #print(fileName+" processed,", "features")
-    print(fileName+" processed,", int(sign_change(result_vector)/2), "features",tiebreaker(result_vector)/2)
+    print(fileName+" processed,", sign_change(result_vector), "features",tiebreaker(result_vector))
 
 finishTime = time.time()
 
-print("The program took ",np.floor(finishTime-startTime)," seconds")
+print("The program took ", np.floor(finishTime-startTime), " seconds")
