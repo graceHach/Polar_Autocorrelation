@@ -5,7 +5,7 @@ import polarAC_utils as pAC
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate fire and GDP data for a specific country.')
+    parser = argparse.ArgumentParser(description='Calculate polar autocorrelation of an XY dataset.')
     parser.add_argument('--data_directory', type=str, help='Directory with data files to perform polar autocorrelation')
     parser.add_argument('--result_directory', type=str, help='Directory to '
                                                              'place results')
