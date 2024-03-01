@@ -47,7 +47,7 @@ result.to_csv("!!!!Compiled_results_otho_meta_para.csv",index=False)
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate fire and GDP data for a specific country.')
+    parser = argparse.ArgumentParser(description='Combine the results of multiple files into a single file.')
     parser.add_argument('--data_directory', type=str, help='Directory with data files to perform polar autocorrelation')
     parser.add_argument('--result_directory', type=str, help='Directory to '
                                                              'place results')
