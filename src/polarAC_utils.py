@@ -1,6 +1,7 @@
 import glob
 import os
 import pandas as pd
+import copy
 
 def autocorrelate(vector):
     """
@@ -37,9 +38,7 @@ def sort_CCW(points):
     # select point at top of point cloud
     # POTENTIAL ISSUE HERE IF THERE ARE REDUNDANT Y VALUES
     sorta.append([x for x in points if x[1] == max_y][0])  # add point with maximum y coordinate, as tuple, to sorta
-    print("top point: ", sorta[0])
     points_copy.remove(sorta[0])  # remove max y point from points list
-    print("top point: ", sorta[0])
     p1, p2 = return_two_closest(sorta[0], points_copy)
     if p1[0] < p2[0]:  # if p1 is the leftmost point
         sorta.append(p1)  # add it to sorta
@@ -49,10 +48,8 @@ def sort_CCW(points):
         sorta.append(p1)
     points_copy.remove(p1)
     points_copy.remove(p2)
-    print(sorta)
     # Iterate through each point
     while len(points_copy) > 0:
-        # print(p1)
         p1 = return_closest(sorta[len(sorta) - 1], points_copy)
         sorta.append(p1)
         points_copy.remove(p1)
