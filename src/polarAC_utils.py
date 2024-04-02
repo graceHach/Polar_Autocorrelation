@@ -1,6 +1,8 @@
 import glob
 import os
 import pandas as pd
+import copy
+
 
 def autocorrelate(vector):
     """
@@ -24,7 +26,38 @@ def autocorrelate(vector):
     return result
 
 
-def return_two_closest(point_,points_list):
+def sort_CCW(points):
+    """
+    Takes a pointcloud and sorts it in counterclockwise order, starting with a top point
+    Input: a list of points where each point is a tuple
+    Output: The same list of points, sorted in CCW order
+    """
+    points_copy = copy.deepcopy(points)
+    x_only, y_only = [x for x, y in points], [y for x, y in points]
+    sorta = []
+    max_y = max(y_only)
+    # select point at top of point cloud
+    # POTENTIAL ISSUE HERE IF THERE ARE REDUNDANT Y VALUES
+    sorta.append([x for x in points if x[1] == max_y][0])  # add point with maximum y coordinate, as tuple, to sorta
+    points_copy.remove(sorta[0])  # remove max y point from points list
+    p1, p2 = return_two_closest(sorta[0], points_copy)
+    if p1[0] < p2[0]:  # if p1 is the leftmost point
+        sorta.append(p1)  # add it to sorta
+        sorta.append(p2)
+    else:
+        sorta.append(p2)
+        sorta.append(p1)
+    points_copy.remove(p1)
+    points_copy.remove(p2)
+    # Iterate through each point
+    while len(points_copy) > 0:
+        p1 = return_closest(sorta[len(sorta) - 1], points_copy)
+        sorta.append(p1)
+        points_copy.remove(p1)
+    return sorta
+
+
+def return_two_closest(point_, points_list):
     """
     Returns two points closest to point_
     Input:
@@ -34,14 +67,15 @@ def return_two_closest(point_,points_list):
     Closest point and second-closest point
     """
     x, y = point_[0], point_[1]
-    # make list of distances between
-    distances = [((x-s[0])**2+(y-s[1])**2)**0.5 for s in points_list]
-    closest_index = distances.index(min(distances))
-    # Remove the element at the index containing the closest distance
-    del distances[closest_index]
-    second_closest_index = distances.index(min(distances))
-    point1 = points_list[closest_index]
-    point2 = points_list[second_closest_index]
+    points_tuples_with_distance = []
+    for current_point in points_list:
+        distance = ((x - current_point[0]) ** 2 + (y - current_point[1]) ** 2) ** 0.5
+        points_tuples_with_distance.append((current_point[0], current_point[1], distance))
+
+    # sorts points in ascending order of distance
+    sorted_tuple_list = sorted(points_tuples_with_distance, key=lambda x: x[2])
+    point1 = (sorted_tuple_list[0][0], sorted_tuple_list[0][1])
+    point2 = (sorted_tuple_list[1][0], sorted_tuple_list[1][1])
     return point1, point2
 
 
@@ -55,40 +89,14 @@ def return_closest(point_, points_list):
     Closest point
     """
     x, y = point_[0], point_[1]
-    min_dist = min([((x-s[0])**2+(y-s[1])**2)**0.5 for s in points_list])
-    min_index = points_list.index([s for s in points_list if ((x-s[0])**2+(y-s[1])**2)**0.5 == min_dist][0])
-    point1 = points_list[min_index]
-    return point1
-
-
-def sort_CCW(points):
-    """
-    Takes a pointcloud and sorts it in counterclockwise order, starting with a top point
-    Input: a list of points where each point is a tuple
-    Output: The same list of points, sorted in CCW order
-    """
-    points_copy = points
-    x_only, y_only = [x for x, y in points], [y for x, y in points]
-    sorta = []
-    max_y = max(y_only)
-    # select point at top of point cloud
-    sorta.append([x for x in points if x[1] == max_y][0]) # add point with maximum y coordinate, as tuple, to sorta
-    points_copy.remove(sorta[0]) # remove max y point from points list
-    p1, p2 = return_two_closest(sorta[0], points_copy)
-    if p1[0]<p2[0]:   # if p1 is the leftmost point
-        sorta.append(p1) # add it to sorta
-        sorta.append(p2)
-    else:
-        sorta.append(p2)
-        sorta.append(p1)
-    points_copy.remove(p1)
-    points_copy.remove(p2)
-    # Iterate through each point
-    while len(points_copy) > 0:
-        p1 = return_closest(sorta[len(sorta)-1], points_copy)
-        sorta.append(p1)
-        points_copy.remove(p1)
-    return sorta
+    points_tuples_with_distance = []
+    for current_point in points_list:
+        distance = ((x - current_point[0]) ** 2 + (y - current_point[1]) ** 2) ** 0.5
+        points_tuples_with_distance.append((current_point[0], current_point[1], distance))
+    min_dist = min([z for x, y, z in points_tuples_with_distance])
+    closest_point = [(x, y) for x, y, z in points_tuples_with_distance if z == min_dist]
+    closest_point_tuple = closest_point[0]
+    return closest_point_tuple
 
 
 def count_sign_changes(dataset):
@@ -122,9 +130,9 @@ def second_derivative_test(dataset):
 
 def first_derivative_test(dataset):
     """
-    Number of times dataset changes concavity (second derivative changes sign)
+    Number of times dataset changes concavity (first derivative changes sign)
     Input: dataset, list of numbers
-    Output: number of sign changes of second derivative
+    Output: number of sign changes of first derivative
     """
     derivative = []
     second_derivative = []
@@ -189,8 +197,8 @@ def arc_length_remapping(points_df):
 
 def get_csvs_from_directory(data_directory):
     """
-    Input:
-    Output:
+    Input: the directory in which data, in xy format may be found.
+    Output: the list of all csvs within this directory
     """
     csv_files = glob.glob(os.path.join(data_directory, "*.csv"))  # What's the deal with OS module?
     return csv_files
@@ -215,14 +223,37 @@ def create_export_df(include_ac_curve, points_df):
     autocorrelation_vector = autocorrelate(points_df['r'])
     # Feature extraction is int(# sign changes/2) or int(# sign changes of second derivative/2)
     num_features_sign_change = count_sign_changes(autocorrelation_vector)//2
-    num_features_2nd_deriv = second_derivative_test(autocorrelation_vector)//2
     if include_ac_curve:
-        result_df = pd.DataFrame(columns=['r_autocorreation', 'arc_length', 'num_features_sign_change', 'num_features_2nd_deriv', ])
+        result_df = pd.DataFrame(columns=['r_autocorreation', 'arc_length', 'num_features_sign_change'])
         result_df['arc_length'] = points_df['arc_length']
         result_df['r_autocorreation'] = autocorrelation_vector
     else:
-        result_df = pd.DataFrame(columns=['num_features_sign_change', 'num_features_2nd_deriv'])
+        result_df = pd.DataFrame(columns=['num_features_sign_change'])
     result_df.loc[0, 'num_features_sign_change'] = num_features_sign_change
+
+    return result_df
+
+def create_export_df_derivatives(include_ac_curve, points_df):
+    """
+    Input:
+    include_AC_curve - bool, if true includes autocorreation as a function of arc length displacement
+    points_df
+    Output: dataframe with autocorreation/feature detection results
+    """
+    # Calculate autocorrelation and extract feature number
+    autocorrelation_vector = autocorrelate(points_df['r'])
+    # Feature extraction is int(# sign changes/2) or int(# sign changes of second derivative/2)
+    num_features_sign_change = count_sign_changes(autocorrelation_vector)//2
+    num_features_2nd_deriv = second_derivative_test(autocorrelation_vector)//2
+    num_features_1st_deriv = first_derivative_test(autocorrelation_vector)//2
+    if include_ac_curve:
+        result_df = pd.DataFrame(columns=['r_autocorreation', 'arc_length', 'num_features_sign_change', 'num_features_1st_deriv', 'num_features_2nd_deriv', ])
+        result_df['arc_length'] = points_df['arc_length']
+        result_df['r_autocorreation'] = autocorrelation_vector
+    else:
+        result_df = pd.DataFrame(columns=['num_features_sign_change', 'num_features_1st_derivative', 'num_features_2nd_deriv'])
+    result_df.loc[0, 'num_features_sign_change'] = num_features_sign_change
+    result_df.loc[0, 'num_features_1st_deriv'] = num_features_1st_deriv
     result_df.loc[0, 'num_features_2nd_deriv'] = num_features_2nd_deriv
 
     return result_df
