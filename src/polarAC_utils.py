@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import copy
 
+
 def autocorrelate(vector):
     """
     Simple autocorrelation function, first point is self-comparison, and therefore equal to 1

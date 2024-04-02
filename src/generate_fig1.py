@@ -18,7 +18,13 @@ def main():
     titles = ['One feature', 'Two features', 'Three features', 'Four features', 'Five features', 'Six features',
               'Seven features', 'Eight features', 'Nine features']
 
-    colors = plt.cm.viridis(np.linspace(0, 1, len(csvs_and_paths)))
+    colors = plt.cm.plasma(np.linspace(0, 1, len(csvs_and_paths)))
+
+    # Defining custom 'xlim' and 'ylim' values.
+    custom_ylim = (-1, 1)
+
+    # Setting the values for all axes.
+    plt.setp(axes, ylim=custom_ylim)
 
     for index, csv_file in enumerate(csvs_and_paths):
         points_df = pAC.read_csv(csv_file)
@@ -29,12 +35,21 @@ def main():
 
         row = index // 3
         col = index % 3
+
         #TODO add labels
         axes[row, col].plot(arc_length, r_autocorrelation, color=colors[index])
         axes[row, col].set_title(titles[index])
+        if col == 0:
+            axes[row, col].set_ylabel("Autocorrelation of r coordinate")
+        else:
+            axes[row, col].set_yticklabels([])
+        if row == 2:
+            axes[row, col].set_xlabel("Parameterized arc length")
+        else:
+            axes[row, col].set_xticklabels([])
 
     plt.tight_layout()
-    plt.savefig(args.figure_destination_directory+'fig1_unannotated.png')
+    plt.savefig(args.figure_destination_directory)
 
 
 if __name__ == '__main__':

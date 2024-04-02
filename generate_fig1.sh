@@ -7,4 +7,4 @@ python src/PolarAC_arc_parameterization_better_practices.py \
 
 python src/generate_fig1.py \
 --data_directory "data\contrived_ideal\results" \
---figure_destination_directory "data\contrived_ideal\results"
+--figure_destination_directory "doc\fig1_unannotated.png"
