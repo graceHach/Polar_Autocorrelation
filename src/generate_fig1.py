@@ -33,10 +33,10 @@ def main():
         #TODO either print these on the graph in some way, or get rid of this line
         num_features = points_df['num_features_sign_change']
 
+        #TODO add vector graphics
         row = index // 3
         col = index % 3
 
-        #TODO add labels
         axes[row, col].plot(arc_length, r_autocorrelation, color=colors[index])
         axes[row, col].set_title(titles[index])
         if col == 0:
@@ -50,6 +50,7 @@ def main():
 
     plt.tight_layout()
     plt.savefig(args.figure_destination_directory)
+    print("Generated figure 1 and placed into doc folder.")
 
 
 if __name__ == '__main__':

@@ -203,6 +203,24 @@ def get_csvs_from_directory(data_directory):
     csv_files = glob.glob(os.path.join(data_directory, "*.csv"))  # What's the deal with OS module?
     return csv_files
 
+def get_csvs_from_directories(data_directory):
+    """
+    Input: the directory in which data, in xy format may be found.
+    Output: the list of all csvs within this directory
+    """
+    csv_files = []
+    # Use os.path.abspath to ensure we're using absolute path of the data directory
+    data_directory = os.path.abspath(data_directory)
+    for root, dirs, files in os.walk(data_directory):
+        for file in files:
+            if file.endswith('.csv'):
+                csv_files.append(os.path.join(root, file))
+    return csv_files
+
+
+
+
+
 def read_csv(csv_filename):
     """
     Input: name of a csv file
