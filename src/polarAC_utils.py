@@ -2,7 +2,8 @@ import glob
 import os
 import pandas as pd
 import copy
-
+import numpy as np
+from scipy import stats
 
 def autocorrelate(vector):
     """
