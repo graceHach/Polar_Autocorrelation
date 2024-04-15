@@ -2,11 +2,6 @@
 
 
 # generate all data for figure 1
-python src/PolarAC_arc_parameterization_better_practices.py \
---data_directory "C:\Users\graci\OneDrive\Documents\Lab\Polar AC\Noisy!\dicrypt\data" \
---result_directory "C:\Users\graci\OneDrive\Documents\Lab\Polar AC\Noisy!\para_1\new_results" \
---include_ac_curve True
-
-python src/PolarAC_process_results_better_practices.py \
---data_directory "C:\Users\graci\OneDrive\Documents\Lab\Polar AC\Noisy!\para_1\new_results" \
---result_directory "C:\Users\graci\OneDrive\Documents\Lab\Polar AC\Noisy!\para_1\new_results"
+python src/generate_fig3.py \
+--data_directory "C:\Users\graci\PycharmProjects\pAC_new\Polar_Autocorrelation\data\contrived_noisy\dicrypt\results" \
+--result_directory "C:\Users\graci\PycharmProjects\pAC_new\Polar_Autocorrelation" \

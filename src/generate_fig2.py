@@ -24,8 +24,6 @@ def main():
     for path in paths:
         csvs_and_paths.append(pAC.get_csvs_from_directories(path))
 
-    #print("working dir:", os.getcwd())
-    #print("Tricrypt paths:", csvs_and_paths[1])
     # results stored in below list of lists
     arc_length, r_ac = [], []
     if len(csvs_and_paths) == 0:
