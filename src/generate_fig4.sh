@@ -7,4 +7,4 @@ python get_AC_statistics.py \
 --ground_truths 2 3 4 5 \
 --result_directory "..\data\contrived_noisy\AC_stats.csv"
 
-python k_means.py
+python generate_fig4.py
