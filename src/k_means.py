@@ -6,9 +6,11 @@ from sklearn import metrics
 # load the dataset
 def main():
     ac_dataset = pAC.read_csv("..\data\contrived_noisy\AC_stats.csv")
-    data_cols = ["num_sign_changes","num_1st_deriv_sign_changes","num_2nd_deriv_sign_changes","Abs_AUC","numerical_tangent"]
+    #data_cols = ["num_sign_changes","num_1st_deriv_sign_changes","num_2nd_deriv_sign_changes","Abs_AUC","numerical_tangent"]
+    #data_cols = ["num_sign_changes", "num_1st_deriv_sign_changes", "num_2nd_deriv_sign_changes"]
+    label_col, data_cols = ac_dataset.columns[0], ac_dataset.columns[1:len(ac_dataset.columns)]
     ac_X = np.array(ac_dataset[data_cols])
-    ac_Y = np.array(ac_dataset['Ground_truth_feature_number'])
+    ac_Y = np.array(ac_dataset[label_col])
     ac_classifier = KMeans(n_clusters=4)
     ac_classifier.fit(ac_X)
     labels_ac = ac_classifier.labels_

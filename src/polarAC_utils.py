@@ -112,6 +112,26 @@ def count_sign_changes(dataset):
             sign_changes = sign_changes+1
     return sign_changes
 
+def third_derivative_test(dataset):
+    """
+    Number of times dataset changes concavity (second derivative changes sign)
+    Input: dataset, list of numbers
+    Output: number of sign changes of second derivative
+    """
+    derivative = []
+    second_derivative = []
+    third_derivative = []
+    for i in range(len(dataset)-1):
+        dx = dataset[i+1]-dataset[i]
+        derivative.append(dx)
+    for i in range(len(derivative)-1):
+        d2x = derivative[i+1]-derivative[i]
+        second_derivative.append(d2x)
+    for i in range(len(second_derivative)-1):
+        d3x = derivative[i+1]-derivative[i]
+        third_derivative.append(d2x)
+    return count_sign_changes(third_derivative)
+
 
 def second_derivative_test(dataset):
     """

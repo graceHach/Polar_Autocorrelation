@@ -13,12 +13,10 @@ def main():
     parser.add_argument('--result_directory', type=str, help='Directories  to place processed results')
     args = parser.parse_args()
     # inialize dataframe
-    results_df = pd.DataFrame(columns=['Ground_truth_feature_number','num_sign_changes', 'num_1st_deriv_sign_changes',
-                            'num_2nd_deriv_sign_changes', 'Abs_AUC', 'numerical_tangent'])
-
+    results_df = pd.DataFrame(columns=['Ground_truth_feature_number', 'num_sign_changes', 'num_1st_deriv_sign_changes','num_2nd_deriv_sign_changes','num_3nd_deriv_sign_changes'])
+    results_df = pd.DataFrame(columns=['Ground_truth_feature_number', 'num_sign_changes', 'num_1st_deriv_sign_changes'])
     paths = args.data_directories
-    #POTENTIAL ISSUE:
-    #paths = [r x for x in paths]
+
     csvs_and_paths = []  # list of tuples, ground truth feature number and csv path
     ground_truth = dict(zip(args.data_directories, args.ground_truths))
     for gt, path in zip(args.ground_truths, paths):
@@ -38,13 +36,22 @@ def main():
         num_2nd_deriv = pAC.second_derivative_test(ac_curve)
         abs_AUC = SU.absolute_AUC(arc_length, ac_curve)
         num_tang = SU.get_numerical_tangent_x_intercept(arc_length, ac_curve)
+        num_3rd_deriv = pAC.third_derivative_test(ac_curve)
+        """
         new_row = {
             'Ground_truth_feature_number': gt,
-            'num_sign_changes': num_sign_changes,
-            'num_1st_deriv_sign_changes': num_1st_deriv,
-            'num_2nd_deriv_sign_changes': num_2nd_deriv,
-            'Abs_AUC': abs_AUC,
-            'numerical_tangent': num_tang
+            'num_sign_changes': num_sign_changes//2,
+            'num_1st_deriv_sign_changes': num_1st_deriv//4,
+            'num_2nd_deriv_sign_changes': num_2nd_deriv//8,
+            'num_3nd_deriv_sign_changes': num_3rd_deriv//16
+
+        }
+        """
+
+        new_row = {
+            'Ground_truth_feature_number': gt,
+            'num_sign_changes': num_sign_changes // 2,
+            'num_1st_deriv_sign_changes': num_1st_deriv // 4
         }
         results_df = pd.concat([results_df, pd.DataFrame([new_row])], ignore_index=True)
         pAC.export_df(results_df, args.result_directory)
