@@ -243,9 +243,9 @@ def create_export_df(include_ac_curve, points_df):
     # Feature extraction is int(# sign changes/2) or int(# sign changes of second derivative/2)
     num_features_sign_change = count_sign_changes(autocorrelation_vector)//2
     if include_ac_curve:
-        result_df = pd.DataFrame(columns=['r_autocorreation', 'arc_length', 'num_features_sign_change'])
+        result_df = pd.DataFrame(columns=['r_autocorrelation', 'arc_length', 'num_features_sign_change'])
         result_df['arc_length'] = points_df['arc_length']
-        result_df['r_autocorreation'] = autocorrelation_vector
+        result_df['r_autocorrelation'] = autocorrelation_vector
     else:
         result_df = pd.DataFrame(columns=['num_features_sign_change'])
     result_df.loc[0, 'num_features_sign_change'] = num_features_sign_change
