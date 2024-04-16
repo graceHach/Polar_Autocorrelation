@@ -112,6 +112,26 @@ def count_sign_changes(dataset):
             sign_changes = sign_changes+1
     return sign_changes
 
+def third_derivative_test(dataset):
+    """
+    Number of times dataset changes concavity (second derivative changes sign)
+    Input: dataset, list of numbers
+    Output: number of sign changes of second derivative
+    """
+    derivative = []
+    second_derivative = []
+    third_derivative = []
+    for i in range(len(dataset)-1):
+        dx = dataset[i+1]-dataset[i]
+        derivative.append(dx)
+    for i in range(len(derivative)-1):
+        d2x = derivative[i+1]-derivative[i]
+        second_derivative.append(d2x)
+    for i in range(len(second_derivative)-1):
+        d3x = derivative[i+1]-derivative[i]
+        third_derivative.append(d2x)
+    return count_sign_changes(third_derivative)
+
 
 def second_derivative_test(dataset):
     """
@@ -243,9 +263,9 @@ def create_export_df(include_ac_curve, points_df):
     # Feature extraction is int(# sign changes/2) or int(# sign changes of second derivative/2)
     num_features_sign_change = count_sign_changes(autocorrelation_vector)//2
     if include_ac_curve:
-        result_df = pd.DataFrame(columns=['r_autocorreation', 'arc_length', 'num_features_sign_change'])
+        result_df = pd.DataFrame(columns=['r_autocorrelation', 'arc_length', 'num_features_sign_change'])
         result_df['arc_length'] = points_df['arc_length']
-        result_df['r_autocorreation'] = autocorrelation_vector
+        result_df['r_autocorrelation'] = autocorrelation_vector
     else:
         result_df = pd.DataFrame(columns=['num_features_sign_change'])
     result_df.loc[0, 'num_features_sign_change'] = num_features_sign_change

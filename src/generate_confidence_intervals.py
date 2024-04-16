@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import argparse
 import polarAC_utils as pAC
+import stat_utils as SU
 import matplotlib.pyplot as plt
 
 # This file does the statistical analysis, and exports results into a csv
@@ -30,7 +31,7 @@ def main():
     else:
 
         width = args.width
-        bins = range(width, 360+width, width)
+        bins = np.arange(width, 360 + width, width)
         # Ac values for each bin are stored in a dict, with the key being the upper edge of the bin (2 to 360)
         # Each AC value is added to the empty list in the dict
         AC_values = {key: [] for key in bins}
@@ -39,11 +40,11 @@ def main():
 
         for csv in csv_paths:
             AC_df = pAC.read_csv(csv)
-            correct_csv = AC_df.columns[0] == 'r_autocorreation' and AC_df.columns[1] == 'arc_length'
+            correct_csv = AC_df.columns[0] == 'r_autocorrelation' and AC_df.columns[1] == 'arc_length'
             # IGNORES files that don't have the correct headers
             if correct_csv:
                 arc_length.append(list(AC_df['arc_length']))
-                r_ac.append(list(AC_df['r_autocorreation']))
+                r_ac.append(list(AC_df['r_autocorrelation']))
             else:
                 print(csv, "has missing or incorrect headers. Headers should be: 'r_autocorreation', 'arc_length', 'num_features_sign_change'")
 
@@ -51,11 +52,13 @@ def main():
         for dataset_tuple in zip(arc_length, r_ac):
             for arc, r_ac in zip(dataset_tuple[0], dataset_tuple[1]):
                 key = (arc//width+1)*width # This rounds up. i.e., 2 becomes 4
+                if key>360:
+                    key=360
                 AC_values[key].append(r_ac)
 
         #print(AC_values.keys())
         for key in list(AC_values.keys()):
-            lb, ub = pAC.confidence_interval(AC_values[key], confidence=confidence_level)
+            lb, ub = SU.confidence_interval(AC_values[key], confidence=confidence_level)
             CI_lower_bound.append(lb)
             CI_upper_bound.append(ub)
 

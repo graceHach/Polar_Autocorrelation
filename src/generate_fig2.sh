@@ -1,4 +1,4 @@
-
+#!/bin/bash -e
 #todo:
 
 python generate_fig2.py \

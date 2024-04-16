@@ -30,19 +30,19 @@ def main():
         print("No csv files in this directory to process.")
     else:
 
-        width_values = [0.5, .75, 2, 3]  # row in data
-        CI_values = [0.9999, 0.99, .98, .97]  # col in data
+        width_values = [0.25, .5, 1, 2]  # row in data
+        CI_values = [0.99999, 0.999, .98, .97]  # col in data
 
 
         for csv in csv_paths:
             AC_df = pAC.read_csv(csv)
-            correct_csv = AC_df.columns[0] == 'r_autocorreation' and AC_df.columns[1] == 'arc_length'
+            correct_csv = AC_df.columns[0] == 'r_autocorrelation' and AC_df.columns[1] == 'arc_length'
             # IGNORES files that don't have the correct headers
             if correct_csv:
                 arc_length.append(list(AC_df['arc_length']))
-                r_ac.append(list(AC_df['r_autocorreation']))
+                r_ac.append(list(AC_df['r_autocorrelation']))
             else:
-                print(csv, "has missing or incorrect headers. Headers should be: 'r_autocorreation', 'arc_length', 'num_features_sign_change'")
+                print(csv, "has missing or incorrect headers. Headers should be: 'r_autocorrelation', 'arc_length', 'num_features_sign_change'")
 
         fig,axs = plt.subplots(4, 4, figsize=(16, 16), sharey=True)
         upper_color, lower_color, middle_color = "#8000ff", "#029688", "#0066ff"
@@ -81,7 +81,10 @@ def main():
                 # Do the plotting
                 # Some bins are empty, overwriting bins with x_values, for which a confidence interval is calculable
                 bins = x_values
-                axs[i, j].set_title(f'Bin Width: {width}, CI: {ci*100:.2f}%')
+                if ci >= .9999:
+                    axs[i, j].set_title(f'Bin Width: {width}, CI: {ci * 100}%')
+                else:
+                    axs[i, j].set_title(f'Bin Width: {width}, CI: {ci*100:.2f}%')
                 axs[i, j].plot(bins, CI_lower_bound, label='Lower', color=color)
                 axs[i, j].plot(bins, CI_upper_bound, label='Upper', color=color)
                 axs[i, j].fill_between(bins, CI_upper_bound, CI_lower_bound, color=color, alpha=0.3, interpolate=True)
