@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import stats
+from itertools import permutations
 
 
 def get_numerical_tangent_x_intercept(x, y, degrees_to_sample=20):
@@ -72,3 +73,25 @@ def area_between_curves(x1, y1, x2, y2):
         a1 = np.trapz(y1,x1)
         a2 = np.trapz(y2,x2)
     return abs(a1-a2)
+
+def transform_labels(ds_w_correct_labels, other_ds, labels=[2,3,4,5]):
+    """
+    Scikit learn randomly assigns zero-indexed labels, which much be mapped back onto the original labels
+    :param ds_w_correct_labels:
+    :param other_ds:
+    :param labels_:
+    :return:
+    """
+    highest_score = -1
+    correct_permutation = labels  # overwritten in below
+    all_permutations = list(permutations(labels))
+    for perm in all_permutations:
+        dict_ = dict(zip(list(perm), labels))
+        other_ds_transformed = [dict_[x] for x in other_ds]
+        both = zip(other_ds_transformed, ds_w_correct_labels)
+        score = sum([1 if x == y else 0 for x, y in both])
+        if score >= highest_score:
+            highest_score = score
+            correct_permutation = other_ds_transformed
+
+    return correct_permutation
