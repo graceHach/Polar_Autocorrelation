@@ -28,7 +28,7 @@ def main():
     ac_classifier.fit(shape_X)
     labels_shape = ac_classifier.labels_
     shape_score = metrics.rand_score(ac_Y, labels_shape)
-    print(AC_score, shape_score)
+    #print(AC_score, shape_score)
 
     # labels don't match. true labels are 2-5, other labels are 0-3
     labels_ac = [x+2 for x in labels_ac]
@@ -69,6 +69,7 @@ def main():
     text = fig.text(.17,.07,f"Accuracy: {AC_score*100:.2f}%", fontsize=14, bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=1'))
     text2 = fig.text(.628, .07, f"Accuracy: {shape_score*100:.2f}%", fontsize=14, bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=1'))
     plt.savefig("..\\doc\\fig4.png")
+    print("Figure 4 generated.")
 
 if __name__=="__main__":
     main()

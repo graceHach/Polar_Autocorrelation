@@ -82,7 +82,7 @@ def main():
                 # Some bins are empty, overwriting bins with x_values, for which a confidence interval is calculable
                 bins = x_values
                 if ci >= .9999:
-                    axs[i, j].set_title(f'Bin Width: {width}, CI: {ci * 100}%')
+                    axs[i, j].set_title(f'Bin Width: {width}, CI: {ci * 100:.3f}%')
                 else:
                     axs[i, j].set_title(f'Bin Width: {width}, CI: {ci*100:.2f}%')
                 axs[i, j].plot(bins, CI_lower_bound, label='Lower', color=color)

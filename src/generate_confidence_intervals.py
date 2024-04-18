@@ -13,7 +13,8 @@ def main():
     parser = argparse.ArgumentParser(description="Generate figure two using the data produced by generate_figure_data.sh")
 
     parser.add_argument('--data_directory', type=str, help='Directory with data (AC curves) to do analysis on')
-    parser.add_argument('--result_directory', type=str, help='Destination directory to place results')
+    parser.add_argument('--filename', type=str, default="Confidence_intervals", help='of csv file. Width and CI '
+                                                                                     'parameters will be appended.')
     parser.add_argument('--width', type=float, default=2, help='Bin width for statistical analysis. Default 2 degrees')
     parser.add_argument('--CI', type=float, default=.95, help='confidence level for statistical analysis. Default 95%')
     args = parser.parse_args()
@@ -46,7 +47,7 @@ def main():
                 arc_length.append(list(AC_df['arc_length']))
                 r_ac.append(list(AC_df['r_autocorrelation']))
             else:
-                print(csv, "has missing or incorrect headers. Headers should be: 'r_autocorreation', 'arc_length', 'num_features_sign_change'")
+                print(csv, "has missing or incorrect headers. Headers should be: 'r_autocorrelation', 'arc_length', 'num_features_sign_change'")
 
 
         for dataset_tuple in zip(arc_length, r_ac):
@@ -58,6 +59,14 @@ def main():
 
         #print(AC_values.keys())
         for key in list(AC_values.keys()):
+            """
+            if len(AC_values[key]) >= 2:
+                lb, ub = SU.confidence_interval(AC_values[key], confidence=confidence_level)
+            else:
+                continue
+                
+            """
+            # Below throws warnings, but works
             lb, ub = SU.confidence_interval(AC_values[key], confidence=confidence_level)
             CI_lower_bound.append(lb)
             CI_upper_bound.append(ub)
@@ -67,7 +76,7 @@ def main():
         stat_df['CI lower bound'] = CI_lower_bound
         stat_df['CI upper bound'] = CI_upper_bound
 
-        filename = args.result_directory +"\\CI_bin_widths-" + str(width) + "_CI-" + str(confidence_level) + ".csv"
+        filename = args.filename +"_bin_widths-" + str(width) + "_CI-" + str(confidence_level) + ".csv"
         pAC.export_df(stat_df, filename)
 
 
