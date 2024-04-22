@@ -1,6 +1,8 @@
 import numpy as np
 from scipy import stats
 from itertools import permutations
+import warnings
+
 
 
 def get_numerical_tangent_x_intercept(x, y, degrees_to_sample=20):
