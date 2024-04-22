@@ -216,13 +216,30 @@ def arc_length_remapping(points_df):
 
     return points_df_copy
 
+
+"""
+
+def get_csvs_from_directory(data_directory):
+   
+    Input: the directory in which data, in xy format may be found.
+    Output: the list of all csvs within this directory
+
+    csv_files = glob.glob(os.path.join(data_directory, "*.csv"))  # What's the deal with OS module?
+    return csv_files
+"""
+
 def get_csvs_from_directory(data_directory):
     """
     Input: the directory in which data, in xy format may be found.
     Output: the list of all csvs within this directory
+    DOESN't use GLOB module
     """
-    csv_files = glob.glob(os.path.join(data_directory, "*.csv"))  # What's the deal with OS module?
+    csv_files = []
+    for file_name in os.listdir(data_directory):
+        if file_name.endswith('.csv'):
+            csv_files.append(os.path.join(data_directory, file_name))
     return csv_files
+
 
 def get_csvs_from_directories(data_directory):
     """

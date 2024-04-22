@@ -16,7 +16,8 @@ def main():
 
     # names of sub-figures
     names = ['Dicrypt', 'Tricrypt', 'Quadcrypt', 'Pentacrypt']
-    colors = [['darkslateblue', 'mediumslateblue', 'mediumpurple'], ['darkblue','mediumblue','blue'], ['seagreen', 'mediumseagreen', 'springgreen'], ['darkgoldenrod', 'goldenrod', 'gold']]
+    #colors = [['darkslateblue', 'mediumslateblue', 'mediumpurple'], ['darkblue','mediumblue','blue'], ['seagreen', 'mediumseagreen', 'springgreen'], ['darkgoldenrod', 'goldenrod', 'gold']]
+    colors = [["#b45f3c", "#d57047", '#f58152'], ["#984144", "#de6064", '#ff6e73'], ["#821c71", "#aa2494", '#aa5794'], ["#46007d", "#5400a5", '#7c00de']]
     legend_bools = [[True, True, True], [True, True, True], [True, True, True], [True, True, True]]
     # Get all csv files in input directories
     csvs_and_paths = []  # nested lists
@@ -42,7 +43,7 @@ def main():
             for csv_file in csvs_and_paths[index]:
                 #print(csv_file)
                 results_df = pAC.read_csv(csv_file)
-                if 'arc_length' in results_df.columns and 'r_autocorreation' in results_df.columns:
+                if 'arc_length' in results_df.columns and 'r_autocorrelation' in results_df.columns:
                     if "results\\0.1_" in  csv_file:
                         color_index = 0
                         label = 'Low noise'
@@ -53,13 +54,13 @@ def main():
                         color_index = 2
                         label = 'High noise'
                     arc_length.append(results_df['arc_length'])
-                    r_ac.append(results_df['r_autocorreation'])
+                    r_ac.append(results_df['r_autocorrelation'])
                     if legend_bools[index][color_index]:  # This ensures that we don't have several hundred legend entries per subfigure
-                        axs[index].plot(results_df['arc_length'], results_df['r_autocorreation'], alpha=.11,
+                        axs[index].plot(results_df['arc_length'], results_df['r_autocorrelation'], alpha=.11,
                                         label=label, color=colors[index][color_index])
                         legend_bools[index][color_index] = False
                     else:
-                        axs[index].plot(results_df['arc_length'], results_df['r_autocorreation'], alpha=.11, color=colors[index][color_index])
+                        axs[index].plot(results_df['arc_length'], results_df['r_autocorrelation'], alpha=.11, color=colors[index][color_index])
                 else:
                     print(
                         f"CSV file {csv_file} has different or missing column headers.")
