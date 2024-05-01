@@ -28,7 +28,7 @@ def main():
 
     for index, csv_file in enumerate(csvs_and_paths):
         points_df = pAC.read_csv(csv_file)
-        r_autocorrelation = points_df['r_autocorreation']
+        r_autocorrelation = points_df['r_autocorrelation']
         arc_length = points_df['arc_length']
         #TODO either print these on the graph in some way, or get rid of this line
         num_features = points_df['num_features_sign_change']

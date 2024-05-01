@@ -27,3 +27,5 @@ python PolarAC_arc_parameterization_better_practices.py \
 --data_directory "..\data\contrived_noisy\pentacrypt\xy_data" \
 --result_directory "..\data\contrived_noisy\pentacrypt\results" \
 --include_ac_curve True
+
+# Figure 3 is generated from the same data as figure 2
